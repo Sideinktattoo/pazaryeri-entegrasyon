@@ -1,0 +1,43 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Pazar Yeri Entegrasyon 2.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-15 12:00+0300\n"
+"PO-Revision-Date: 2023-11-15 12:00+0300\n"
+"Last-Translator: Sizin Adınız <email@example.com>\n"
+"Language-Team: Türkçe <email@example.com>\n"
+"Language: tr_TR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Marketplace Integration"
+msgstr "Pazar Yeri Entegrasyonu"
+
+msgid "Suppliers"
+msgstr "Tedarikçiler"
+
+msgid "Import Products"
+msgstr "Ürün İçe Aktar"
+
+msgid "Export Products"
+msgstr "Ürün Dışa Aktar"
+
+msgid "Marketplaces"
+msgstr "Pazaryerleri"
+
+msgid "Profit Calculation"
+msgstr "Kar Hesaplama"
+
+msgid "Cost Price"
+msgstr "Maliyet Fiyatı"
+
+msgid "Packaging Cost"
+msgstr "Paketleme Maliyeti"
+
+msgid "Shipping Cost"
+msgstr "Kargo Maliyeti"
+
+msgid "Marketplace Commission (%)"
+msgstr "Pazar Yeri Komisyonu (%)"
