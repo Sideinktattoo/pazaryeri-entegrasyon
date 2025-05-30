@@ -227,3 +227,98 @@ class PY_KZ_Supplier_Manager {
 
     // Diğer yardımcı metodlar...
 }
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class PYE_Supplier_Manager {
+    private static $instance = null;
+    private $table_name;
+
+    public static function instance() {
+        if (is_null(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
+        global $wpdb;
+        $this->table_name = $wpdb->prefix . 'pye_suppliers';
+        
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('pye_hourly_import', array($this, 'process_scheduled_imports'));
+        
+        // Çoklu dil desteği için metinleri yükle
+        add_action('init', array($this, 'load_textdomain'));
+    }
+
+    public function load_textdomain() {
+        load_plugin_textdomain('pazar-yeri-entegrasyon', false, dirname(plugin_basename(__FILE__)) . '/languages/';
+    }
+
+    public static function create_tables() {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        
+        $suppliers_table = $wpdb->prefix . 'pye_suppliers';
+        $supplier_xmls_table = $wpdb->prefix . 'pye_supplier_xmls';
+        
+        $sql = "CREATE TABLE $suppliers_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            name varchar(100) NOT NULL,
+            contact_person varchar(100),
+            email varchar(100),
+            phone varchar(20),
+            address text,
+            notes text,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id)
+        ) $charset_collate;
+        
+        CREATE TABLE $supplier_xmls_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            supplier_id mediumint(9) NOT NULL,
+            xml_name varchar(100) NOT NULL,
+            xml_url varchar(255) NOT NULL,
+            profit_margin decimal(5,2) DEFAULT 0,
+            auto_update tinyint(1) DEFAULT 0,
+            category_mapping text,
+            last_import datetime,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id),
+            FOREIGN KEY (supplier_id) REFERENCES $suppliers_table(id) ON DELETE CASCADE
+        ) $charset_collate;";
+        
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    public function add_admin_menu() {
+        add_menu_page(
+            __('Marketplace Integration', 'pazar-yeri-entegrasyon'),
+            __('Marketplace', 'pazar-yeri-entegrasyon'),
+            'manage_woocommerce',
+            'pazar-yeri-entegrasyon',
+            array($this, 'render_main_page'),
+            'dashicons-store',
+            56
+        );
+        
+        add_submenu_page(
+            'pazar-yeri-entegrasyon',
+            __('Suppliers', 'pazar-yeri-entegrasyon'),
+            __('Suppliers', 'pazar-yeri-entegrasyon'),
+            'manage_woocommerce',
+            'pazar-yeri-suppliers',
+            array($this, 'render_suppliers_page')
+        );
+        
+        // Diğer menü öğeleri...
+    }
+
+    // Diğer metodlar...
+}
