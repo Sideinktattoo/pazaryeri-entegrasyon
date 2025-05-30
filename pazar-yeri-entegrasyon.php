@@ -363,3 +363,85 @@ function pye_init() {
     PYE_Profit_Calculator::instance();
 }
 add_action('plugins_loaded', 'pye_init');
+<?php
+/**
+ * Plugin Name: Pazar Yeri Entegrasyon ve Kar/Zarar Hesaplama
+ * Description: WooCommerce için çoklu tedarikçi ve pazar yeri entegrasyonu
+ * Version: 2.0.0
+ * Author: Your Name
+ * Text Domain: pazar-yeri-entegrasyon
+ */
+
+defined('ABSPATH') || exit;
+
+// Define constants
+define('PYE_VERSION', '2.0.0');
+define('PYE_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('PYE_PLUGIN_URL', plugin_dir_url(__FILE__));
+
+// Check WooCommerce
+if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+    add_action('admin_notices', 'pye_woocommerce_missing_notice');
+    return;
+}
+
+function pye_woocommerce_missing_notice() {
+    echo '<div class="error"><p>' . esc_html__('WooCommerce required for this plugin', 'pazar-yeri-entegrasyon') . '</p></div>';
+}
+
+// Load textdomain
+add_action('plugins_loaded', function() {
+    load_plugin_textdomain('pazar-yeri-entegrasyon', false, dirname(plugin_basename(__FILE__)) . '/languages/';
+});
+
+// Include class files
+$files = [
+    'class-supplier-manager',
+    'class-importer',
+    'class-exporter',
+    'class-marketplace',
+    'class-order-manager',
+    'class-profit-calculator',
+    'class-settings'
+];
+
+foreach ($files as $file) {
+    require_once PYE_PLUGIN_DIR . "includes/{$file}.php";
+}
+
+// Activation/deactivation
+register_activation_hook(__FILE__, 'pye_activate');
+register_deactivation_hook(__FILE__, 'pye_deactivate');
+
+function pye_activate() {
+    PYE_Supplier_Manager::create_tables();
+    PYE_Order_Manager::create_tables();
+    
+    if (!wp_next_scheduled('pye_hourly_import')) {
+        wp_schedule_event(time(), 'six_hours', 'pye_hourly_import');
+    }
+}
+
+function pye_deactivate() {
+    wp_clear_scheduled_hook('pye_hourly_import');
+}
+
+// Add custom cron interval
+add_filter('cron_schedules', function($schedules) {
+    $schedules['six_hours'] = [
+        'interval' => 6 * HOUR_IN_SECONDS,
+        'display' => __('Every 6 Hours', 'pazar-yeri-entegrasyon')
+    ];
+    return $schedules;
+});
+
+// Initialize plugin
+add_action('plugins_loaded', function() {
+    PYE_Settings::instance();
+    PYE_Supplier_Manager::instance();
+    PYE_Importer::instance();
+    PYE_Exporter::instance();
+    PYE_Marketplace::instance();
+    PYE_Order_Manager::instance();
+    PYE_Profit_Calculator::instance();
+});
