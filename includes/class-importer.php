@@ -323,3 +323,62 @@ class PY_KZ_Importer {
         }
     }
 }
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class PYE_Importer {
+    private static $instance = null;
+    
+    public static function instance() {
+        if (is_null(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_pye_import_products', array($this, 'ajax_import_products'));
+        add_action('pye_hourly_import', array($this, 'process_scheduled_imports'));
+    }
+
+    public function enqueue_scripts($hook) {
+        if (strpos($hook, 'pazar-yeri-entegrasyon') === false) {
+            return;
+        }
+        
+        wp_enqueue_script(
+            'pye-import',
+            PYE_PLUGIN_URL . 'assets/js/import.js',
+            array('jquery'),
+            PYE_VERSION,
+            true
+        );
+        
+        wp_localize_script('pye-import', 'pye_import_params', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'import_nonce' => wp_create_nonce('pye_import_nonce'),
+            'importing_text' => __('Importing products...', 'pazar-yeri-entegrasyon'),
+            'error_text' => __('An error occurred:', 'pazar-yeri-entegrasyon'),
+            'success_text' => __('Products imported successfully!', 'pazar-yeri-entegrasyon'),
+        ));
+    }
+
+    public function render_import_page() {
+        // Çoklu dil desteği için metinler
+        $translations = array(
+            'import_products' => __('Import Products', 'pazar-yeri-entegrasyon'),
+            'select_supplier' => __('Select Supplier', 'pazar-yeri-entegrasyon'),
+            'xml_url' => __('XML URL', 'pazar-yeri-entegrasyon'),
+            'profit_margin' => __('Profit Margin (%)', 'pazar-yeri-entegrasyon'),
+            'auto_update' => __('Auto Update Every 6 Hours', 'pazar-yeri-entegrasyon'),
+            'start_import' => __('Start Import', 'pazar-yeri-entegrasyon'),
+        );
+        
+        include PYE_PLUGIN_DIR . 'templates/admin/import.php';
+    }
+
+    // Diğer metodlar...
+}
