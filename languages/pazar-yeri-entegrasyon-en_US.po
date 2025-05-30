@@ -1,0 +1,43 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Marketplace Integration 2.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-15 12:00+0300\n"
+"PO-Revision-Date: 2023-11-15 12:00+0300\n"
+"Last-Translator: Your Name <email@example.com>\n"
+"Language-Team: English <email@example.com>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Marketplace Integration"
+msgstr "Marketplace Integration"
+
+msgid "Suppliers"
+msgstr "Suppliers"
+
+msgid "Import Products"
+msgstr "Import Products"
+
+msgid "Export Products"
+msgstr "Export Products"
+
+msgid "Marketplaces"
+msgstr "Marketplaces"
+
+msgid "Profit Calculation"
+msgstr "Profit Calculation"
+
+msgid "Cost Price"
+msgstr "Cost Price"
+
+msgid "Packaging Cost"
+msgstr "Packaging Cost"
+
+msgid "Shipping Cost"
+msgstr "Shipping Cost"
+
+msgid "Marketplace Commission (%)"
+msgstr "Marketplace Commission (%)"
